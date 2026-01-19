@@ -1,95 +1,144 @@
-using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Godot;
+using Poly2Tri;
+using Poly2Tri.Triangulation.Polygon;
 
 public partial class BuildingPerimeter : MeshInstance3D
 {
-	[Export] float Height = 12.0f;
+    [Export]
+    float Height = 12.0f;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		Generate();
-	}
+    readonly BuildingFootprint TestFootprint = new(
+        new List<FootprintPolygon>()
+        {
+            new FootprintPolygon()
+            {
+                new Vector3(0, 0, 0),
+                new Vector3(10, 0, 0),
+                new Vector3(10, 0, 6),
+                new Vector3(4, 0, 6),
+                new Vector3(4, 0, 10),
+                new Vector3(0, 0, 10),
+            },
+            new FootprintPolygon(true)
+            {
+                new Vector3(2, 0, 2),
+                new Vector3(2, 0, 4),
+                new Vector3(4, 0, 4),
+                new Vector3(4, 0, 2),
+            },
+        }
+    );
 
-	void Generate()
-	{
-		// Testing footprint
-		Vector3[] footprint =
-		{
-			new Vector3(0, 0, 0),
-			new Vector3(10, 0, 0),
-			new Vector3(10, 0, 6),
-			new Vector3(4, 0, 6),
-			new Vector3(4, 0, 10),
-			new Vector3(0, 0, 10)
-		};
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        Generate(TestFootprint);
+    }
 
-		List<Vector3> verts = new();
-		List<Vector3> normals = new();
-		List<int> indices = new();
+    void Generate(BuildingFootprint footprint)
+    {
+        List<Vector3> verts = new();
+        List<Vector3> normals = new();
+        List<int> indices = new();
 
-		int offset = 0;
+        int offset = 0;
 
-		for (int i = 0; i < footprint.Length; i++)
-		{
-			Vector3 thisPoint = footprint[i];
-			Vector3 nextPoint = footprint[(i + 1) % footprint.Length];
+        for (int i = 0; i < footprint.Polygons.Count; i++)
+        {
+            FootprintPolygon polygonVertices = footprint.Polygons[i];
+            for (int j = 0; j < polygonVertices.Count; j++)
+            {
+                Vector3 thisPoint = polygonVertices[j];
+                Vector3 nextPoint = polygonVertices[(j + 1) % polygonVertices.Count];
 
-			Vector3 thisTop = thisPoint + (Vector3.Up * Height);
-			Vector3 nextTop = nextPoint + (Vector3.Up * Height);
+                Vector3 thisTop = thisPoint + (Vector3.Up * Height);
+                Vector3 nextTop = nextPoint + (Vector3.Up * Height);
 
-			Vector3 edge = nextPoint - thisPoint;
-			Vector3 normal = edge.Cross(Vector3.Up).Normalized();
+                Vector3 edge = nextPoint - thisPoint;
+                Vector3 normal;
 
-			verts.Add(thisPoint);
-			verts.Add(nextPoint);
-			verts.Add(nextTop);
-			verts.Add(thisTop);
+                if (polygonVertices.IsInner)
+                {
+                    normal = Vector3.Down.Cross(edge).Normalized();
+                }
+                else
+                {
+                    normal = edge.Cross(Vector3.Up).Normalized();
+                }
 
-			for (int j = 0; j < 4; j++)
-			{
-				normals.Add(normal);
-			}
+                verts.Add(thisPoint);
+                verts.Add(nextPoint);
+                verts.Add(nextTop);
+                verts.Add(thisTop);
+                for (int k = 0; k < 4; k++)
+                {
+                    normals.Add(normal);
+                }
+                indices.Add(offset + 0);
+                indices.Add(offset + 1);
+                indices.Add(offset + 2);
+                indices.Add(offset + 2);
+                indices.Add(offset + 3);
+                indices.Add(offset + 0);
+                offset += 4;
+            }
+        }
 
-			indices.Add(offset + 0);
-			indices.Add(offset + 1);
-			indices.Add(offset + 2);
+        int roofStart = verts.Count;
+        Vector3 roofNormal = Vector3.Up;
 
-			indices.Add(offset + 2);
-			indices.Add(offset + 3);
-			indices.Add(offset + 0);
+        foreach (FootprintPolygon OuterPolygon in footprint.Polygons.Where(e => !e.IsInner))
+        {
+            PolygonPoint[] points = new PolygonPoint[OuterPolygon.Count];
 
-			offset += 4;
-		}
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = new PolygonPoint(OuterPolygon[i].X, OuterPolygon[i].Z);
+            }
 
-		int roofStart = verts.Count;
-		Vector3 roofNormal = Vector3.Up;
+            Polygon polygon = new Polygon(points);
 
-		for (int i = 0; i < footprint.Length; i++)
-		{
-			verts.Add(footprint[i] + Vector3.Up * Height);
-			normals.Add(roofNormal);
-		}
+            foreach (FootprintPolygon InnerPolygon in footprint.Polygons.Where(e => e.IsInner))
+            {
+                PolygonPoint[] holePoints = new PolygonPoint[InnerPolygon.Count];
 
-		for (int i = 1; i < footprint.Length - 1; i++)
-		{
-			indices.Add(roofStart);
-			indices.Add(roofStart + i);
-			indices.Add(roofStart + i + 1);
-		}
+                for (int i = 0; i < holePoints.Length; i++)
+                {
+                    holePoints[i] = new PolygonPoint(InnerPolygon[i].X, InnerPolygon[i].Z);
+                }
 
-		var arrays = new Godot.Collections.Array();
-		arrays.Resize((int)Mesh.ArrayType.Max);
+                Polygon holePolygon = new Polygon(holePoints);
+                polygon.AddHole(holePolygon);
+            }
 
-		arrays[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
-		arrays[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-		arrays[(int)Mesh.ArrayType.Index]  = indices.ToArray();
+            P2T.Triangulate(polygon);
 
-		var mesh = new ArrayMesh();
-		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+            foreach (var tri in polygon.Triangles)
+            {
+                foreach (var p in tri.Points)
+                {
+                    verts.Add(new Vector3((float)p.X, Height, (float)p.Y));
+                    normals.Add(Vector3.Up);
+                    indices.Add(offset++);
+                }
+            }
+        }
 
-		Mesh = mesh;
-	}
-	
+        var arrays = new Godot.Collections.Array();
+
+        arrays.Resize((int)Mesh.ArrayType.Max);
+
+        arrays[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
+        arrays[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+        arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+        var mesh = new ArrayMesh();
+
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+
+        Mesh = mesh;
+    }
 }

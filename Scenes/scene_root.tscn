@@ -37,3 +37,6 @@ transform = Transform3D(-0.5930113, 0.14449587, -0.79212284, 7.450581e-09, 0.983
 script = ExtResource("3_54p3v")
 sensitivity = 0.5
 speed = 20.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.96731204, -0.09339763, 0.23576327, -1.3888821e-08, 0.9297058, 0.3683031, -0.25358912, -0.35626397, 0.89931566, 0, 3.1415188, 0)
