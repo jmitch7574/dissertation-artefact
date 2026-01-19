@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://bn0xs6fwuew4a"]
+
+[ext_resource type="Script" uid="uid://d2fu8ha2sbllj" path="res://Scripts/BuildingPerimeter.cs" id="1_iy555"]
+[ext_resource type="Texture2D" uid="uid://fexmi1m706ft" path="res://Textures/texture_08.png" id="2_a54av"]
+[ext_resource type="Script" uid="uid://dy2isun8gt3js" path="res://Scripts/DebugCamera.gd" id="3_54p3v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54p3v"]
+albedo_texture = ExtResource("2_a54av")
+
+[sub_resource type="QuadMesh" id="QuadMesh_iy555"]
+
+[sub_resource type="Environment" id="Environment_a54av"]
+background_mode = 1
+background_color = Color(0.051970966, 0.05197096, 0.05197095, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 1
+volumetric_fog_density = 0.01
+
+[node name="SceneRoot" type="Node3D"]
+
+[node name="Building" type="Node3D" parent="."]
+
+[node name="BuildingPerimeter" type="MeshInstance3D" parent="Building"]
+script = ExtResource("1_iy555")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, -4.371139e-05, 1000, 0, -1000, -4.371139e-05, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_54p3v")
+mesh = SubResource("QuadMesh_iy555")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_a54av")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.5930113, 0.14449587, -0.79212284, 7.450581e-09, 0.98376626, 0.17945465, 0.8051941, 0.106418684, -0.58338463, 0, 0, 0)
+script = ExtResource("3_54p3v")
+sensitivity = 0.5
+speed = 20.0
