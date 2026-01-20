@@ -1,44 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Godot;
+using OsmSharp;
+using OsmSharp.Streams;
 using Poly2Tri;
 using Poly2Tri.Triangulation.Polygon;
 
 public partial class BuildingPerimeter : MeshInstance3D
 {
     [Export]
-    float Height = 12.0f;
+    public float Height = 12.0f;
 
-    readonly BuildingFootprint TestFootprint = new(
-        new List<FootprintPolygon>()
-        {
-            new FootprintPolygon()
-            {
-                new Vector3(0, 0, 0),
-                new Vector3(10, 0, 0),
-                new Vector3(10, 0, 6),
-                new Vector3(4, 0, 6),
-                new Vector3(4, 0, 10),
-                new Vector3(0, 0, 10),
-            },
-            new FootprintPolygon(true)
-            {
-                new Vector3(2, 0, 2),
-                new Vector3(2, 0, 4),
-                new Vector3(4, 0, 4),
-                new Vector3(4, 0, 2),
-            },
-        }
-    );
+    [Export]
+    public Vector2 Offset;
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        Generate(TestFootprint);
-    }
+    public BuildingFootprint footprint;
 
-    void Generate(BuildingFootprint footprint)
+    public void Generate()
     {
         List<Vector3> verts = new();
         List<Vector3> normals = new();
@@ -52,6 +32,9 @@ public partial class BuildingPerimeter : MeshInstance3D
             for (int j = 0; j < polygonVertices.Count; j++)
             {
                 Vector3 thisPoint = polygonVertices[j];
+
+                GD.Print(thisPoint);
+
                 Vector3 nextPoint = polygonVertices[(j + 1) % polygonVertices.Count];
 
                 Vector3 thisTop = thisPoint + (Vector3.Up * Height);

@@ -6,6 +6,11 @@
     <RootNamespace>dissertationartefact</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="GeoJson.Text" Version="1.1.0" />
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+    <PackageReference Include="NetTopologySuite.CoordinateSystems" Version="1.15.3" />
+    <PackageReference Include="OsmSharp" Version="6.2.0" />
     <PackageReference Include="Poly2Tri" Version="1.0.1" />
+    <PackageReference Include="ProjNet" Version="2.1.0" />
   </ItemGroup>
 </Project>
