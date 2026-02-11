@@ -16,6 +16,7 @@ public partial class Building : Node3D
     public void Generate()
     {
         bp.footprint = PerimeterFromFeature();
+        bp.buildingParent = this;
         bp.Generate();
     }
 

@@ -21,7 +21,7 @@ volumetric_fog_density = 0.01
 [node name="SceneRoot" type="Node3D"]
 
 [node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(10000, 0, 0, 0, -0.0004371139, 10000, 0, -10000, -0.0004371139, 0.015686035, 4.7683716e-07, -0.008569241)
+transform = Transform3D(10000, 0, 0, 0, -0.0004371139, 10000, 0, -10000, -0.0004371139, 0.7462921, 0.19099474, -0.9987731)
 material_override = SubResource("StandardMaterial3D_54p3v")
 mesh = SubResource("QuadMesh_iy555")
 

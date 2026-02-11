@@ -18,6 +18,8 @@ public partial class BuildingPerimeter : MeshInstance3D
 
     public BuildingFootprint footprint;
 
+    public Building buildingParent;
+
     public void Generate()
     {
         List<Vector3> verts = new();
@@ -32,8 +34,6 @@ public partial class BuildingPerimeter : MeshInstance3D
             for (int j = 0; j < polygonVertices.Count; j++)
             {
                 Vector3 thisPoint = polygonVertices[j];
-
-                GD.Print(thisPoint);
 
                 Vector3 nextPoint = polygonVertices[(j + 1) % polygonVertices.Count];
 
@@ -76,10 +76,19 @@ public partial class BuildingPerimeter : MeshInstance3D
         foreach (FootprintPolygon OuterPolygon in footprint.Polygons.Where(e => !e.IsInner))
         {
             PolygonPoint[] points = new PolygonPoint[OuterPolygon.Count];
-
+            GD.Print("---BREAK---");
             for (int i = 0; i < points.Length; i++)
             {
                 points[i] = new PolygonPoint(OuterPolygon[i].X, OuterPolygon[i].Z);
+
+                if (
+                    buildingParent.feature.Properties.Keys.Contains("name")
+                    && buildingParent.feature.Properties["name"].ToString()
+                        == "Isaac Newton Building"
+                )
+                {
+                    GD.Print(points[i]);
+                }
             }
 
             Polygon polygon = new Polygon(points);
