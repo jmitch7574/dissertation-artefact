@@ -11,7 +11,13 @@ using Poly2Tri.Triangulation.Polygon;
 public partial class BuildingPerimeter : MeshInstance3D
 {
     [Export]
-    public float Height = 12.0f;
+    public Material heightAvailable;
+
+    [Export]
+    public Material heightUnavailable;
+
+    [Export]
+    public float Height = -1;
 
     [Export]
     public Vector2 Offset;
@@ -22,6 +28,8 @@ public partial class BuildingPerimeter : MeshInstance3D
 
     public void Generate()
     {
+        //VisualiseHeightAvailable();
+
         List<Vector3> verts = new();
         List<Vector3> normals = new();
         List<int> indices = new();
@@ -80,15 +88,6 @@ public partial class BuildingPerimeter : MeshInstance3D
             for (int i = 0; i < points.Length; i++)
             {
                 points[i] = new PolygonPoint(OuterPolygon[i].X, OuterPolygon[i].Z);
-
-                if (
-                    buildingParent.feature.Properties.Keys.Contains("name")
-                    && buildingParent.feature.Properties["name"].ToString()
-                        == "Isaac Newton Building"
-                )
-                {
-                    GD.Print(points[i]);
-                }
             }
 
             Polygon polygon = new Polygon(points);
@@ -132,5 +131,17 @@ public partial class BuildingPerimeter : MeshInstance3D
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
 
         Mesh = mesh;
+    }
+
+    void VisualiseHeightAvailable()
+    {
+        if (Height == -1)
+        {
+            Height = 12.0f;
+            MaterialOverlay = heightUnavailable;
+            return;
+        }
+
+        MaterialOverlay = heightAvailable;
     }
 }

@@ -14,7 +14,7 @@ public partial class Manager : Node3D
     {
         using (
             var file = FileAccess.Open(
-                @"res://OSM Files/lincoln_bng.geojson",
+                @"res://OSM Files/lincoln_bng_height.geojson",
                 FileAccess.ModeFlags.Read
             )
         )
