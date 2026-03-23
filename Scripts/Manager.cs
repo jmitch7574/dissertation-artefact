@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.Json;
 using GeoJSON.Text.Feature;
 using Godot;
@@ -14,6 +17,37 @@ public partial class Manager : Node3D
     [ExportToolButton("Kill Children")]
     public Callable KillChildrenButton => Callable.From(KillChildren);
 
+    public override void _EnterTree()
+    {
+        var ctx = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
+        if (ctx != null)
+            ctx.Unloading += OnUnloading;
+    }
+
+    private static void OnUnloading(AssemblyLoadContext ctx)
+    {
+        GD.Print("Unloading");
+
+        var jsonAssembly = typeof(JsonSerializerOptions).Assembly;
+        var updateHandlerType = jsonAssembly.GetType(
+            "System.Text.Json.JsonSerializerOptionsUpdateHandler"
+        );
+        var clearCacheMethod = updateHandlerType?.GetMethod(
+            "ClearCache",
+            BindingFlags.Static | BindingFlags.Public
+        );
+        clearCacheMethod?.Invoke(null, new object?[] { null });
+
+        Assembly[] assembliesToWipe =
+        [
+            typeof(OsmSharp.Node).Assembly,
+            typeof(GeoJSON.Text.GeoJSONObject).Assembly,
+        ];
+
+        foreach (var type in assembliesToWipe.SelectMany(a => a.GetTypes()))
+            ClassStateWiper.Unload(type, null, false);
+    }
+
     public override void _Ready()
     {
         //Generate();
@@ -21,7 +55,7 @@ public partial class Manager : Node3D
 
     public void Generate()
     {
-        GD.Print("Generating");
+        //GD.Print("Generating!");
         KillChildren();
 
         PackedScene building = (PackedScene)GD.Load("res://Scenes/building.tscn");

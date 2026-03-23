@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://58xm5g4d3n8k"]
 
-[ext_resource type="Script" uid="uid://d2fu8ha2sbllj" path="res://Scripts/BuildingPerimeter.cs" id="1_avus0"]
+[ext_resource type="Script" path="res://Scripts/BuildingPerimeter.cs" id="1_avus0"]
 [ext_resource type="Script" uid="uid://hvodbvy0e7rn" path="res://Scripts/Building.cs" id="1_uj2qm"]
 [ext_resource type="Material" uid="uid://bpmkyts6hr3j0" path="res://Materials/heightAvailable.tres" id="3_b2wr7"]
 [ext_resource type="Material" uid="uid://cugar8gfaf4jp" path="res://Materials/heightUnavailable.tres" id="4_n4bpb"]
