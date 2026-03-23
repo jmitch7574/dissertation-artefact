@@ -8,6 +8,7 @@ using OsmSharp.Streams;
 using Poly2Tri;
 using Poly2Tri.Triangulation.Polygon;
 
+[Tool]
 public partial class BuildingPerimeter : MeshInstance3D
 {
     [Export]

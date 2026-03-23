@@ -8,8 +8,20 @@ public partial class Manager : Node3D
 {
     public static readonly Vector2 offset = new(497276, 370866);
 
+    [ExportToolButton("Generate City!")]
+    public Callable GenerateButton => Callable.From(Generate);
+
+    [ExportToolButton("Kill Children")]
+    public Callable KillChildrenButton => Callable.From(KillChildren);
+
+    public override void _Ready()
+    {
+        //Generate();
+    }
+
     public void Generate()
     {
+        GD.Print("Generating");
         KillChildren();
 
         PackedScene building = (PackedScene)GD.Load("res://Scenes/building.tscn");

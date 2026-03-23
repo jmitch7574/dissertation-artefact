@@ -1,15 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://58xm5g4d3n8k"]
+[gd_scene format=3 uid="uid://58xm5g4d3n8k"]
 
 [ext_resource type="Script" uid="uid://d2fu8ha2sbllj" path="res://Scripts/BuildingPerimeter.cs" id="1_avus0"]
 [ext_resource type="Script" uid="uid://hvodbvy0e7rn" path="res://Scripts/Building.cs" id="1_uj2qm"]
 [ext_resource type="Material" uid="uid://bpmkyts6hr3j0" path="res://Materials/heightAvailable.tres" id="3_b2wr7"]
 [ext_resource type="Material" uid="uid://cugar8gfaf4jp" path="res://Materials/heightUnavailable.tres" id="4_n4bpb"]
 
-[node name="Building" type="Node3D"]
+[node name="Building" type="Node3D" unique_id=573139546 node_paths=PackedStringArray("bp")]
 script = ExtResource("1_uj2qm")
+bp = NodePath("BuildingPerimeter")
 metadata/_custom_type_script = "uid://hvodbvy0e7rn"
 
-[node name="BuildingPerimeter" type="MeshInstance3D" parent="."]
+[node name="BuildingPerimeter" type="MeshInstance3D" parent="." unique_id=1595497029]
 script = ExtResource("1_avus0")
 heightAvailable = ExtResource("3_b2wr7")
 heightUnavailable = ExtResource("4_n4bpb")

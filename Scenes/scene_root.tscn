@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bn0xs6fwuew4a"]
+[gd_scene format=3 uid="uid://bn0xs6fwuew4a"]
 
 [ext_resource type="Texture2D" uid="uid://fexmi1m706ft" path="res://Textures/texture_08.png" id="2_a54av"]
 [ext_resource type="Script" uid="uid://dy2isun8gt3js" path="res://Scripts/DebugCamera.gd" id="3_54p3v"]
@@ -18,24 +18,24 @@ ambient_light_color = Color(1, 1, 1, 1)
 reflected_light_source = 1
 volumetric_fog_density = 0.01
 
-[node name="SceneRoot" type="Node3D"]
+[node name="SceneRoot" type="Node3D" unique_id=961394810]
 
-[node name="Floor" type="MeshInstance3D" parent="."]
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1997233289]
 transform = Transform3D(10000, 0, 0, 0, -0.0004371139, 10000, 0, -10000, -0.0004371139, 0.7462921, 0.19099474, -0.9987731)
 material_override = SubResource("StandardMaterial3D_54p3v")
 mesh = SubResource("QuadMesh_iy555")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=811599729]
 environment = SubResource("Environment_a54av")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1973406932]
 transform = Transform3D(-0.5930113, 0.14449587, -0.79212284, 7.450581e-09, 0.98376626, 0.17945465, 0.8051941, 0.106418684, -0.58338463, 0, 0, 0)
 script = ExtResource("3_54p3v")
 sensitivity = 0.5
 speed = 100.0
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1859035245]
 transform = Transform3D(0.96731204, -0.09339763, 0.23576327, -1.3888821e-08, 0.9297058, 0.3683031, -0.25358912, -0.35626397, 0.89931566, 0, 3.1415188, 0)
 
-[node name="Manager" type="Node3D" parent="."]
+[node name="Manager" type="Node3D" parent="." unique_id=1303226981]
 script = ExtResource("4_3kdmg")

@@ -5,6 +5,7 @@ using GeoJSON.Text.Feature;
 using GeoJSON.Text.Geometry;
 using Godot;
 
+[Tool]
 [GlobalClass]
 public partial class Building : Node3D
 {
