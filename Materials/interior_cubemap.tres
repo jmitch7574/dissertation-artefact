@@ -1,10 +1,11 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://ns0n1mf2pk3v"]
 
 [ext_resource type="Shader" uid="uid://bnkc6dvod12ah" path="res://Shaders/interior_cubemap.gdshader" id="1_4xq7y"]
-[ext_resource type="Texture2D" uid="uid://dqvcag55xjhrk" path="res://icon.svg" id="2_6yvug"]
+[ext_resource type="Texture2D" uid="uid://w70327tw6so8" path="res://Textures/residential_cubemap.png" id="2_6yvug"]
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_4xq7y")
-shader_parameter/room_atlas = ExtResource("2_6yvug")
-shader_parameter/brightness = 1.0
+shader_parameter/cubemap_albedo = ExtResource("2_6yvug")
+shader_parameter/room_depth = 1.0
+shader_parameter/emission_strength = 0.0

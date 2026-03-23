@@ -16,19 +16,14 @@ public partial class BuildingPerimeter : MeshInstance3D
     [Export]
     public Material heightUnavailable;
 
-    [Export]
-    public float Height = -1;
-
-    [Export]
-    public Vector2 Offset;
-
     public BuildingFootprint footprint;
 
-    public Building buildingParent;
+    public Building building;
 
     public void Generate()
     {
         //VisualiseHeightAvailable();
+        AssignMaterial();
 
         List<Vector3> verts = new();
         List<Vector3> normals = new();
@@ -45,8 +40,8 @@ public partial class BuildingPerimeter : MeshInstance3D
 
                 Vector3 nextPoint = polygonVertices[(j + 1) % polygonVertices.Count];
 
-                Vector3 thisTop = thisPoint + (Vector3.Up * Height);
-                Vector3 nextTop = nextPoint + (Vector3.Up * Height);
+                Vector3 thisTop = thisPoint + (Vector3.Up * building.Height);
+                Vector3 nextTop = nextPoint + (Vector3.Up * building.Height);
 
                 Vector3 edge = nextPoint - thisPoint;
                 Vector3 normal;
@@ -111,7 +106,7 @@ public partial class BuildingPerimeter : MeshInstance3D
             {
                 foreach (var p in tri.Points)
                 {
-                    verts.Add(new Vector3((float)p.X, Height, (float)p.Y));
+                    verts.Add(new Vector3((float)p.X, building.Height, (float)p.Y));
                     normals.Add(Vector3.Up);
                     indices.Add(offset++);
                 }
@@ -133,11 +128,24 @@ public partial class BuildingPerimeter : MeshInstance3D
         Mesh = mesh;
     }
 
+    private void AssignMaterial()
+    {
+        switch (building.GetBuildingType())
+        {
+            case "residential":
+            case "apartments":
+                MaterialOverlay = GD.Load<Material>("res://Materials/red_brick.tres");
+                break;
+            default:
+                break;
+        }
+    }
+
     void VisualiseHeightAvailable()
     {
-        if (Height == -1)
+        if (building.Height == -1)
         {
-            Height = 12.0f;
+            building.Height = 12.0f;
             MaterialOverlay = heightUnavailable;
             return;
         }

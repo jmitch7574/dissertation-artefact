@@ -5,9 +5,9 @@
 [ext_resource type="Material" uid="uid://bpmkyts6hr3j0" path="res://Materials/heightAvailable.tres" id="3_b2wr7"]
 [ext_resource type="Material" uid="uid://cugar8gfaf4jp" path="res://Materials/heightUnavailable.tres" id="4_n4bpb"]
 
-[node name="Building" type="Node3D" node_paths=PackedStringArray("bp")]
+[node name="Building" type="Node3D"]
 script = ExtResource("1_uj2qm")
-bp = NodePath("BuildingPerimeter")
+metadata/_custom_type_script = "uid://hvodbvy0e7rn"
 
 [node name="BuildingPerimeter" type="MeshInstance3D" parent="."]
 script = ExtResource("1_avus0")

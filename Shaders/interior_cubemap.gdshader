@@ -1,115 +1,131 @@
-// MIT License
-// 
-// Copyright (c) 2026 [PROJEKTSANSSTUDIOS]
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// Fake 3D Interior Shader
-// Description: Creates a 3D interior illusion using 2D atlas textures
-
 shader_type spatial;
-render_mode unshaded;
+//render_mode unshaded;
 
-uniform sampler2D room_atlas;
-uniform float brightness : hint_range(0.0, 4.0) = 1.0; // Brightness control clamped 0-4
+const float ROOM_SIZE = 2.;
 
-varying vec3 v_pos;
-varying vec3 v_cam;
+uniform sampler2D cubemap_albedo : hint_default_white;
+uniform sampler2D cubemap_normalmap : hint_normal;
+uniform sampler2D cubemap_emission : hint_default_black;
 
-vec2 face_uv(vec3 p, vec3 f) {
-	if (f.x > 0.5)  return vec2(-p.z,  p.y);
-	if (f.x < -0.5) return vec2( p.z,  p.y);
-	if (f.y > 0.5)  return vec2( p.x, -p.z);
-	if (f.y < -0.5) return vec2( p.x,  p.z);
-	if (f.z > 0.5)  return vec2( p.x,  p.y);
-	return vec2(-p.x,  p.y);
+uniform float room_depth : hint_range(0., 4.0, 0.01) = 1.;
+uniform float emission_strength : hint_range(0., 10., 0.01) = 0.;
+
+varying vec3 obj_vertex;
+varying flat vec3 obj_cam;
+
+float remap_range(float value, float min_in, float max_in, float min_out, float max_out) {
+    return(value - min_in) / (max_in - min_in) * (max_out - min_out) + min_out;
 }
 
-int face_index(vec3 f) {
-	if (f.x > 0.5)  return 0;
-	if (f.x < -0.5) return 1;
-	if (f.y > 0.5)  return 2;
-	if (f.y < -0.5) return 3;
-	if (f.z > 0.5)  return 4;
-	return 5;
+float bool_to_sign(bool b) {
+	return (b) ? 1. : -1.;
+}
+
+vec3 sample_cubemap(sampler2D cubemap, vec2 uv, vec3 face) {
+	face = normalize(face);
+
+	if (face.x == 1.) {
+		//+X
+		uv.x = remap_range(uv.x, 0., 1., 0., 1./3.);
+		uv.y = remap_range(uv.y, 0., 1., 0., 1./2.);
+	}
+	else if (face.x == -1.) {
+		//-X
+		uv.x = remap_range(uv.x, 0., 1., 0., 1./3.);
+		uv.y = remap_range(uv.y, 0., 1., 1./2., 1.);
+	}
+	else if (face.y == 1.) {
+		//+Y
+		uv.x = remap_range(uv.x, 0., 1., 1./3., 2./3.);
+		uv.y = remap_range(uv.y, 0., 1., 0., 1./2.);
+	}
+	else if (face.y == -1.) {
+		//-Y
+		uv.x = remap_range(uv.x, 0., 1., 1./3., 2./3.);
+		uv.y = remap_range(uv.y, 0., 1., 1./2., 1.);
+	}
+	else if (face.z == 1.) {
+		//+Z
+		uv.x = remap_range(uv.x, 0., 1., 2./3., 1.);
+		uv.y = remap_range(uv.y, 0., 1., 0., 1./2.);
+	}
+	else if (face.z == -1.) {
+		//-Z
+		uv.x = remap_range(uv.x, 0., 1., 2./3., 1.);
+		uv.y = remap_range(uv.y, 0., 1., 1./2., 1.);
+	}
+
+	return texture(cubemap, uv).rgb;
 }
 
 void vertex() {
-	v_pos = VERTEX;
-	v_cam = inverse(MODELVIEW_MATRIX)[3].xyz;
+	if (room_depth != 0.) {
+		vec2 d = vec2(ROOM_SIZE, ROOM_SIZE)/2.;
+		vec3 delta = vec3(d.x, 0., d.y);
+
+		obj_vertex = VERTEX - delta;
+
+		//camera pos in obj space
+		obj_cam = inverse(MODELVIEW_MATRIX)[3].xyz - delta;
+	}
 }
 
 void fragment() {
-	vec3 ray = normalize(v_pos - v_cam);
+	vec3 cm_face = vec3(0., 0., 1.);
+	vec2 cm_uv = UV;
 
-	float tx = (ray.x > 0.0) ? (0.5 - v_cam.x) / ray.x : (-0.5 - v_cam.x) / ray.x;
-	float ty = (ray.y > 0.0) ? (0.5 - v_cam.y) / ray.y : (-0.5 - v_cam.y) / ray.y;
-	float tz = (ray.z > 0.0) ? (0.5 - v_cam.z) / ray.z : (-0.5 - v_cam.z) / ray.z;
+	if (room_depth != 0.) {
+		float depth = room_depth * 2.;
+		vec3 cam2pix = obj_vertex - obj_cam;
 
-	float t = min(min(tx, ty), tz);
-	vec3 hit = v_cam + ray * t;
+		//camp2pix.y <= 0 --> show floor
+		//camp2pix.y > 0 --> show ceiling
+		float is_floor = step(cam2pix.y, 0.);
+		float ceil_y   = ceil(obj_vertex.y / depth - is_floor) * depth;
+		float ceil_t   = (ceil_y - obj_cam.y) / cam2pix.y;
 
-	vec3 face;
-	const float EPSILON = 0.0001;
-	if (abs(t - tx) < EPSILON) {
-		face = vec3(sign(ray.x), 0.0, 0.0);
-	} else if (abs(t - ty) < EPSILON) {
-		face = vec3(0.0, sign(ray.y), 0.0);
-	} else {
-		face = vec3(0.0, 0.0, sign(ray.z));
+		//camp2pix.z <= 0 --> show north
+		//camp2pix.z > 0 --> show south
+		float is_north = step(cam2pix.z, 0.);
+		float wall_f_z = ceil(obj_vertex.z / ROOM_SIZE - is_north) * ROOM_SIZE;
+		float wall_f_t = (wall_f_z - obj_cam.z) / cam2pix.z;
+
+		//camp2pix.x <= 0 --> show east
+		//camp2pix.x > 0 --> show west
+		float is_east  = step(cam2pix.x, 0.);
+		float wall_e_z = ceil(obj_vertex.x / ROOM_SIZE - is_east) * ROOM_SIZE;
+		float wall_e_t = (wall_e_z - obj_cam.x) / cam2pix.x;
+
+		vec2 tex_coord;
+		float min_t = min(min(ceil_t, wall_e_t), wall_f_t);
+
+		if (wall_e_t == min_t) {
+			//East / West
+			tex_coord = obj_cam.zy + wall_e_t * cam2pix.zy;
+			cm_face = vec3((is_east == 0.) ? 1. : -1., 0., 0.);
+		}
+		else if (wall_f_t == min_t) {
+			//Front / Back
+			tex_coord = obj_cam.xy + wall_f_t * cam2pix.xy;
+			cm_face = vec3(0., (is_north == 0.) ? -1. : 1., 0.);
+		}
+		else if (ceil_t == min_t) {
+			//Ceiling / Floor
+			tex_coord = obj_cam.xz + ceil_t * cam2pix.xz;
+			cm_face = vec3(0., 0., (is_floor == 0.) ? -1. : 1.);
+		}
+
+		if (!(ceil_t == min_t)) {
+			tex_coord.y /= room_depth;
+		}
+
+		cm_uv = (tex_coord*.5 + 1.);
+
+		cm_uv.x = clamp(cm_uv.x, 0., 1.);
+		cm_uv.y = clamp(cm_uv.y, 0., 1.);
 	}
 
-	vec2 uv = face_uv(hit, face) * 0.5 + 0.5;
-	uv = vec2(1.0 - uv.x, 1.0 - uv.y); // Flip both axes
-	uv = clamp(uv, 0.0, 1.0);
-
-	int i = face_index(face);
-	
-	// Hardcoded offset values
-	vec2 offsets[6];
-	offsets[0] = vec2(-0.340, 0.75);   // +X face
-	offsets[1] = vec2(-0.675, -0.75);  // -X face
-	offsets[2] = vec2(0.1775, -0.5);   // +Y face
-	offsets[3] = vec2(0.1775, 0.5);    // -Y face
-	offsets[4] = vec2(0.0, 0.0);       // +Z face
-	offsets[5] = vec2(0.515, -0.25);   // -Z face
-	
-	// Hardcoded size values
-	vec2 sizes[6];
-	sizes[0] = vec2(1.35, 1.0);  // +X face
-	sizes[1] = vec2(1.35, 1.0);  // -X face
-	sizes[2] = vec2(0.65, 2.0);  // +Y face
-	sizes[3] = vec2(0.65, 2.0);  // -Y face
-	sizes[4] = vec2(1.0, 1.0);   // +Z face
-	sizes[5] = vec2(0.65, 1.0);  // -Z face
-	
-	// Apply offset and size scaling
-	vec2 atlas_uv = offsets[i] + uv * sizes[i];
-	
-	// Sample texture and apply brightness
-	vec3 color = texture(room_atlas, atlas_uv).rgb;
-	
-	// Apply brightness control with clamping
-	color = color * brightness;
-	
-	// Clamp to prevent negative values
-	color = max(color, 0.0);
-	
-	ALBEDO = color;
+	ALBEDO = sample_cubemap(cubemap_albedo, cm_uv, cm_face);
+	NORMAL = sample_cubemap(cubemap_normalmap, cm_uv, cm_face);
+	EMISSION = sample_cubemap(cubemap_emission, cm_uv, cm_face) * emission_strength;
 }

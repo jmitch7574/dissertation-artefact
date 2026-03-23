@@ -5,9 +5,22 @@ using GeoJSON.Text.Feature;
 using GeoJSON.Text.Geometry;
 using Godot;
 
+[GlobalClass]
 public partial class Building : Node3D
 {
     public Feature feature;
+
+    [Export]
+    public float Height = -1;
+
+    [Export]
+    public float Floors;
+
+    [Export]
+    public float HeightPerFloor = 3.5f;
+
+    [Export]
+    public Vector2 Offset;
 
     [Export]
     public BuildingPerimeter bp;
@@ -21,23 +34,23 @@ public partial class Building : Node3D
         }
 
         bp.footprint = PerimeterFromFeature();
-        bp.buildingParent = this;
+        bp.building = this;
 
         if (feature.Properties.ContainsKey("lidar:m_height"))
         {
-            bp.Height = float.Parse(feature.Properties["lidar:m_height"].ToString());
+            Height = float.Parse(feature.Properties["lidar:m_height"].ToString());
         }
-        if (bp.Height < 1)
+        if (Height < 1)
         {
             if (feature.Properties.TryGetValue("building", out object buildingType))
             {
                 if (buildingType.ToString() == "apartments")
                 {
-                    bp.Height = 15;
+                    Height = 15;
                 }
                 if (buildingType.ToString() == "university")
                 {
-                    bp.Height = 14;
+                    Height = 14;
                 }
             }
         }
@@ -99,5 +112,21 @@ public partial class Building : Node3D
         }
 
         return result;
+    }
+
+    public string GetBuildingType()
+    {
+        if (feature.Properties.TryGetValue("building", out object type))
+        {
+            if (type.ToString() == "yes")
+            {
+                if (feature.Properties.TryGetValue("amenity", out object amenity))
+                {
+                    return amenity.ToString();
+                }
+            }
+            return type.ToString();
+        }
+        return "default";
     }
 }
