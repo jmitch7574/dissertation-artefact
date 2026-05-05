@@ -1,0 +1,26 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dnuiumyp23xe0"]
+
+[ext_resource type="Texture2D" uid="uid://b0n0707uyfo33" path="res://Textures/grass/Grass001_1K-JPG_AmbientOcclusion.jpg" id="AmbientOcclusion"]
+[ext_resource type="Texture2D" uid="uid://doaillaa7e5q6" path="res://Textures/grass/Grass001_1K-JPG_Color.jpg" id="Color"]
+[ext_resource type="Texture2D" uid="uid://cmeq17vva5j0m" path="res://Textures/grass/Grass001_1K-JPG_Displacement.jpg" id="Displacement"]
+[ext_resource type="Texture2D" uid="uid://t0gtb54da4l3" path="res://Textures/grass/Grass001_1K-JPG_NormalGL.jpg" id="NormalGL"]
+[ext_resource type="Texture2D" uid="uid://dxgbu5715w6gp" path="res://Textures/grass/Grass001_1K-JPG_Roughness.jpg" id="Roughness"]
+
+[resource]
+albedo_texture = ExtResource("Color")
+roughness_texture = ExtResource("Roughness")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("NormalGL")
+ao_enabled = true
+ao_texture = ExtResource("AmbientOcclusion")
+ao_texture_channel = 4
+heightmap_enabled = true
+heightmap_scale = 1.0
+heightmap_texture = ExtResource("Displacement")
+uv1_scale = Vector3(0.05, 0.05, 0.05)
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv2_scale = Vector3(0.05, 0.05, 0.05)
+uv2_triplanar = true
+uv2_world_triplanar = true

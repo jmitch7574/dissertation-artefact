@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://fexmi1m706ft" path="res://Textures/texture_08.png" id="2_a54av"]
 [ext_resource type="Script" uid="uid://dy2isun8gt3js" path="res://Scripts/DebugCamera.gd" id="3_54p3v"]
+[ext_resource type="PackedScene" uid="uid://bq6j3yrj0r0s6" path="res://Scenes/water.tscn" id="3_m4rw6"]
 [ext_resource type="Script" uid="uid://c1uhjq2ymigam" path="res://Scripts/Manager.cs" id="4_3kdmg"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54p3v"]
@@ -21,7 +22,8 @@ volumetric_fog_density = 0.01
 [node name="SceneRoot" type="Node3D" unique_id=961394810]
 
 [node name="Floor" type="MeshInstance3D" parent="." unique_id=1997233289]
-transform = Transform3D(10000, 0, 0, 0, -0.0004371139, 10000, 0, -10000, -0.0004371139, 0.7462921, 0.19099474, -0.9987731)
+transform = Transform3D(10000, 0, 0, 0, -0.0004371139, 10000, 0, -10000, -0.0004371139, -0.7901764, -0.21873426, -1.3633361)
+visible = false
 material_override = SubResource("StandardMaterial3D_54p3v")
 mesh = SubResource("QuadMesh_iy555")
 
@@ -37,5 +39,9 @@ speed = 100.0
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1859035245]
 transform = Transform3D(0.96731204, -0.09339763, 0.23576327, -1.3888821e-08, 0.9297058, 0.3683031, -0.25358912, -0.35626397, 0.89931566, 0, 3.1415188, 0)
 
+[node name="Water" parent="." unique_id=202785101 instance=ExtResource("3_m4rw6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -61.719078, 0)
+
 [node name="Manager" type="Node3D" parent="." unique_id=1303226981]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.740013, -1.583786, 51.257793)
 script = ExtResource("4_3kdmg")

@@ -1,9 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://chsetwnrrmssw"]
+[gd_scene format=4 uid="uid://chsetwnrrmssw"]
 
 [ext_resource type="Script" uid="uid://hvodbvy0e7rn" path="res://Scripts/Building.cs" id="1_882hh"]
 [ext_resource type="Script" uid="uid://d2fu8ha2sbllj" path="res://Scripts/BuildingPerimeter.cs" id="2_oipg2"]
 [ext_resource type="Material" uid="uid://rgloo7bs1sif" path="res://Materials/red_brick.tres" id="2_vqdqb"]
-[ext_resource type="PackedScene" uid="uid://cl0wxy8d6locg" path="res://Scenes/window.tscn" id="4_vqdqb"]
+[ext_resource type="PackedScene" uid="uid://cl0wxy8d6locg" path="res://Scenes/square-window.tscn" id="4_vqdqb"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_vqdqb"]
 _surfaces = [{

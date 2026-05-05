@@ -1,0 +1,27 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bv4atwmishcds"]
+
+[ext_resource type="Texture2D" uid="uid://ddllhts5d3q4c" path="res://Textures/gravel/Gravel023_1K-JPG_AmbientOcclusion.jpg" id="AmbientOcclusion"]
+[ext_resource type="Texture2D" uid="uid://dwfah2gb4xgmr" path="res://Textures/gravel/Gravel023_1K-JPG_Color.jpg" id="Color"]
+[ext_resource type="Texture2D" uid="uid://dgromvjacg0ya" path="res://Textures/gravel/Gravel023_1K-JPG_Displacement.jpg" id="Displacement"]
+[ext_resource type="Texture2D" uid="uid://p7mscswol120" path="res://Textures/gravel/Gravel023_1K-JPG_NormalGL.jpg" id="NormalGL"]
+[ext_resource type="Texture2D" uid="uid://05nl4681kw7o" path="res://Textures/gravel/Gravel023_1K-JPG_Roughness.jpg" id="Roughness"]
+
+[resource]
+albedo_color = Color(0.41598046, 0.41598043, 0.4159804, 1)
+albedo_texture = ExtResource("Color")
+roughness_texture = ExtResource("Roughness")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("NormalGL")
+ao_enabled = true
+ao_texture = ExtResource("AmbientOcclusion")
+ao_texture_channel = 4
+heightmap_enabled = true
+heightmap_scale = 1.0
+heightmap_texture = ExtResource("Displacement")
+uv1_scale = Vector3(0.05, 0.05, 0.05)
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv2_scale = Vector3(0.05, 0.05, 0.05)
+uv2_triplanar = true
+uv2_world_triplanar = true

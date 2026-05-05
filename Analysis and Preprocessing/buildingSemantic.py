@@ -6,7 +6,7 @@ file_path = '../OSM Files/london.geojson'
 
 semantic_tags = [
     'height', 'building:levels', 'roof:shape', 'roof:material', 
-    'building:material', 'building:color', 'amenity', 'shop'
+    'building:material', 'building:colour', 'amenity', 'shop'
 ]
 
 # Residential types to exclude (Corrected spelling to 'residential')

@@ -26,6 +26,9 @@ public partial class Building : Node3D
     [Export]
     public BuildingPerimeter bp;
 
+    [Export]
+    public WindowPlacer wp;
+
     // Called when the node enters the scene tree for the first time.
     public void Generate()
     {
@@ -66,6 +69,8 @@ public partial class Building : Node3D
         {
             Name = $"Building {feature.Id}";
         }
+
+        wp.Generate(this);
     }
 
     public BuildingFootprint PerimeterFromFeature()
