@@ -90,7 +90,7 @@ public static class RoadBuilder
         instance.MaterialOverlay = MaterialLibrary.GetForRoad(highwayTag);
         instance.Position = new(
             instance.Position.X,
-            instance.Position.Y + 0.02f,
+            instance.Position.Y + MaterialLibrary.GetRoadOffset(highwayTag) / 100.0f,
             instance.Position.Z
         );
         return instance;

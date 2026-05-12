@@ -101,7 +101,15 @@ public partial class BuildingPerimeter : MeshInstance3D
                 polygon.AddHole(holePolygon);
             }
 
-            P2T.Triangulate(polygon);
+            try
+            {
+                P2T.Triangulate(polygon);
+            }
+            catch
+            {
+                GD.PrintErr("Failed to Triangulate building");
+                continue;
+            }
 
             foreach (var tri in polygon.Triangles)
             {

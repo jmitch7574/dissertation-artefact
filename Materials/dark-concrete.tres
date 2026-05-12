@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://br2doy6j66kse" path="res://Textures/concrete/Concrete034_1K-JPG_Roughness.jpg" id="4_djq55"]
 
 [resource]
+transparency = 1
 albedo_color = Color(0.5609549, 0.5609549, 0.5609549, 1)
 albedo_texture = ExtResource("1_1f4u8")
 roughness_texture = ExtResource("4_djq55")

@@ -22,6 +22,7 @@ public partial class WindowPlacer : Node3D
         WindowData chosenWindow = type switch
         {
             "residential" => SquareWindow,
+            "apartments" => SquareWindow,
             "retail" => SquareWindow,
             "university" => UniversityWindow,
             _ => null,

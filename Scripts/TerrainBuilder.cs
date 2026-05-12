@@ -41,14 +41,14 @@ public static class TerrainBuilder
         arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
 
         var mesh = new ArrayMesh();
-        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays: arrays);
 
         var instance = new MeshInstance3D { Mesh = mesh };
 
-        instance.MaterialOverlay = MaterialLibrary.GetForLanduse(landuseTag);
+        instance.MaterialOverlay = MaterialLibrary.GetForLanduse(landuseTag: landuseTag);
         instance.Position = new(
             instance.Position.X,
-            instance.Position.Y + 0.01f,
+            instance.Position.Y + (MaterialLibrary.GetLanduseOffset(landuseTag) + 1) / 100.0f,
             instance.Position.Z
         );
         return instance;

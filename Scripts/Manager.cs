@@ -148,10 +148,14 @@ public partial class Manager : Node3D
                     }
                 }
 
-                if (!props.TryGetValue("landuse", out object _landuse) && !isWater)
+                bool hasLanduse = props.TryGetValue("landuse", out object _landuse);
+
+                bool hasAmenity = props.TryGetValue("amenity", out object _amenity);
+
+                if (!hasLanduse && !hasAmenity && !isWater)
                     continue; // ← skip only if NEITHER landuse NOR water
 
-                string landuse = isWater ? "water" : _landuse.ToString();
+                string landuse = isWater ? "water" : _landuse?.ToString() ?? _amenity?.ToString();
 
                 if (geom is Polygon poly)
                 {
