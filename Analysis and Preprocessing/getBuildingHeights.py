@@ -1,60 +1,147 @@
+"""
+extract_building_heights.py
+
+Extracts LiDAR-derived building heights from nDSM rasters and attaches them
+to OSM building footprints as a 'lidar:m_height' property.
+
+Key features:
+  - Erodes building polygons inward before sampling to avoid edge-pixel noise
+  - Correctly handles courtyard buildings (polygons with holes):
+      outer walls shrink inward, courtyard holes expand outward
+  - Falls back to the original polygon for buildings too small to erode
+  - Strips null properties from the output GeoJSON
+"""
+
+import json
+import numpy as np
 import rasterio
 import geopandas as gpd
-import pandas as pd
-import numpy as np
 from rasterstats import zonal_stats
-import json
+from shapely.geometry import Polygon, MultiPolygon
+from shapely.ops import unary_union
 
-# 1. Define File Paths
-dsm_path = "../GeoTiff/FZ_DSM_SK9570_P_10742_20181216_20181216.tif"
-dtm_path = "../GeoTiff\DTM_SK9570_P_10742_20181216_20181216.tif"  # You need the corresponding DTM
-geojson_path = "..\OSM Files\lincoln_bng.geojson"
-output_path = "..\OSM Files\lincoln_bng_height.geojson"
+DSM_PATH     = "../GeoTiff/FZ_DSM_SK9570_P_10742_20181216_20181216.tif"
+DTM_PATH     = "../GeoTiff/DTM_SK9570_P_10742_20181216_20181216.tif"
+GEOJSON_PATH = "../OSM Files/lincoln/buildings.geojson"
+OUTPUT_PATH  = "../OSM Files/lincoln/buildings.geojson"
 
-# 2. Calculate the nDSM (Normalized Digital Surface Model)
-# This represents the actual height of objects above ground
-with rasterio.open(dsm_path) as dsm_src:
+
+OFFSET_METRES = 2
+
+def shrink_vertexes(geom, offset_metres):
+    """
+    Sample the vertexes of a building height such that the vertexes move towards the building's body
+      - Outer boundary:           shrinks inward  (negative buffer)
+      - Inner boundaries / holes: grow outward    (positive buffer on the hole)
+
+    return the original polygon if shrinked edges collapse
+    """
+    if geom is None or geom.is_empty:
+        return geom
+
+    def single_polygon(poly):
+        if not isinstance(poly, Polygon):
+            return poly
+
+        eroded_exterior = Polygon(poly.exterior).buffer(-offset_metres)
+        if eroded_exterior.is_empty:
+            return poly
+
+        expanded_holes = []
+        for interior in poly.interiors:
+            expanded_hole = Polygon(interior).buffer(offset_metres)
+            if not expanded_hole.is_empty:
+                expanded_holes.append(expanded_hole)
+
+        if expanded_holes:
+            result = eroded_exterior.difference(unary_union(expanded_holes))
+        else:
+            result = eroded_exterior
+
+        return result if (result is not None and not result.is_empty) else poly
+
+    if isinstance(geom, Polygon):
+        return single_polygon(geom)
+
+    elif isinstance(geom, MultiPolygon):
+        parts = [single_polygon(part) for part in geom.geoms]
+        valid_parts = [p for p in parts if p is not None and not p.is_empty]
+        if valid_parts:
+            return unary_union(valid_parts)
+        return geom  # All parts collapsed — return original
+
+    else:
+        # Points, LineStrings, etc. — leave unchanged
+        return geom
+
+print("Reading DSM and DTM rasters...")
+
+with rasterio.open(DSM_PATH) as dsm_src:
     dsm_data = dsm_src.read(1)
-    affine = dsm_src.transform
-    nodata = dsm_src.nodata
-    
-    with rasterio.open(dtm_path) as dtm_src:
-        dtm_data = dtm_src.read(1)
-        
-    # Subtract DTM from DSM to get height above ground
-    # We use np.where to ensure we don't calculate heights on NoData pixels
-    ndsm = np.where((dsm_data != nodata) & (dtm_data != nodata), dsm_data - dtm_data, np.nan)
+    affine   = dsm_src.transform
+    nodata   = dsm_src.nodata
+    raster_crs = dsm_src.crs.to_string()
 
-# 3. Load OSM GeoJSON
-buildings = gpd.read_file(geojson_path)
+with rasterio.open(DTM_PATH) as dtm_src:
+    dtm_data = dtm_src.read(1)
 
-# Ensure the CRS (Coordinate Reference System) matches the Raster
-with rasterio.open(dsm_path) as src:
-    raster_crs = src.crs.to_string()
+ndsm = np.where(
+    (dsm_data != nodata) & (dtm_data != nodata),
+    dsm_data - dtm_data,
+    np.nan
+)
+
+print("nDSM calculated.")
+
+print(f"Loading building footprints from {GEOJSON_PATH}...")
+
+buildings = gpd.read_file(GEOJSON_PATH)
 buildings = buildings.to_crs(raster_crs)
 
-# 4. Extract average height per building polygon
-# 'stats="mean"' handles the averaging within the building footprint
-stats = zonal_stats(buildings, ndsm, affine=affine, stats="mean", nodata=np.nan)
+print(f"  {len(buildings)} buildings loaded.")
 
-# 5. Assign to the 'lidar:m_height' field
-buildings['lidar:m_height'] = [round(s['mean'], 2) if s['mean'] is not None else 0 for s in stats]
+print(f"Eroding building footprints by {OFFSET_METRES} m (courtyard-aware)...")
 
-for col in buildings.select_dtypes(include=['datetime64', 'datetime64[ns]', 'datetimetz']).columns:
-    buildings[col] = buildings[col].astype(str)
+sampling_geoms = gpd.GeoSeries(
+    [shrink_vertexes(geom, OFFSET_METRES) for geom in buildings.geometry],
+    crs=buildings.crs
+)
 
-# 1. Convert the GeoDataFrame to a Python Dictionary (GeoJSON format)
+# Report how many fell back to the original polygon
+n_fallback = sum(
+    s.equals(o)
+    for s, o in zip(sampling_geoms, buildings.geometry)
+)
+print(f"  {n_fallback} buildings were too small to erode and use their original footprint.")
+
+
+print("Sampling nDSM within eroded footprints...")
+
+stats = zonal_stats(
+    sampling_geoms,
+    ndsm,
+    affine=affine,
+    stats="mean",
+    nodata=np.nan
+)
+
+buildings["lidar:m_height"] = [
+    round(s["mean"], 2) if s["mean"] is not None else 0
+    for s in stats
+]
+
 data = json.loads(buildings.to_json())
 
-# 2. Scrub all 'null' values from the properties of each feature
-for feature in data['features']:
-    # This dictionary comprehension keeps the key/value ONLY if the value isn't None/null
-    feature['properties'] = {k: v for k, v in feature['properties'].items() if v is not None}
+# Remove the null entries added by geopandas
+for feature in data["features"]:
+    feature["properties"] = {
+        k: v for k, v in feature["properties"].items() if v is not None
+    }
 
-# 3. Write the cleaned dictionary to a file
-with open(output_path, 'w', encoding='utf-8') as f:
+with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False)
 
-print(f"Cleaned file saved to {output_path} without null properties.")
-
-print(f"Processing complete. Saved to {output_path}")
+print(f"\nDone. Output saved to {OUTPUT_PATH}")
+print(f"  Buildings processed : {len(buildings)}")
+print(f"  Offset applied     : {OFFSET_METRES} m")
+print(f"  Fallback (no offset): {n_fallback}")

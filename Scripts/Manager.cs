@@ -224,20 +224,20 @@ public partial class Manager : Node3D
         baseCombiner.Position = new Vector3(0, -5, 0);
         AddChild(baseCombiner);
         baseCombiner.Owner = GetTree().EditedSceneRoot;
+        baseCombiner.MaterialOverlay = MaterialLibrary.GetForLanduse("gravel");
 
-        var grass = new CsgPolygon3D();
-        grass.Name = "grass";
-        grass.Polygon = new Vector2[]
+        CsgPolygon3D ground = new CsgPolygon3D();
+        ground.Name = "grass";
+        ground.Polygon = new Vector2[]
         {
             new(-2500, -2500),
             new(-2500, 2500),
             new(2500, 2500),
             new(2500, -2500),
         };
-        grass.Depth = 5f;
-        grass.Material = MaterialLibrary.GetForLanduse("gravel");
-        baseCombiner.AddChild(grass);
-        grass.Owner = GetTree().EditedSceneRoot;
+        ground.Depth = 5f;
+        baseCombiner.AddChild(ground);
+        ground.Owner = GetTree().EditedSceneRoot;
 
         // Union all water into a single combiner, then subtract that from base
         var waterUnion = new CsgCombiner3D();

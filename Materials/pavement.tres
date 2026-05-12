@@ -8,6 +8,7 @@
 
 [resource]
 albedo_texture = ExtResource("1_kspd5")
+metallic_specular = 0.0
 roughness_texture = ExtResource("5_3perx")
 roughness_texture_channel = 4
 normal_enabled = true

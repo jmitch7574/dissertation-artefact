@@ -12,6 +12,7 @@ public static class MaterialLibrary
         { "retail", "res://materials/paving_stones.tres" },
         { "pedestrian", "res://materials/paving_stones.tres" },
         { "residential", "res://materials/paving_stones.tres" },
+        { "university", "res://materials/paving_stones.tres" },
         { "gravel", "res://materials/gravel.tres" },
     };
 
@@ -26,5 +27,13 @@ public static class MaterialLibrary
         {
             "footway" or "path" or "pavement" => GD.Load<Material>("res://materials/pavement.tres"),
             _ => GD.Load<Material>("res://materials/road.tres"),
+        };
+
+    public static Material GetForBuilding(string buildingType) =>
+        buildingType switch
+        {
+            "residential" or "apartments" => GD.Load<Material>("res://Materials/red_brick.tres"),
+            "university" => GD.Load<Material>("res://Materials/dark-concrete.tres"),
+            _ => null,
         };
 }

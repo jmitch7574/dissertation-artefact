@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://wapfxgd422iw"]
+[gd_scene format=3 uid="uid://cl0wxy8d6locg"]
 
-[ext_resource type="Material" uid="uid://ns0n1mf2pk3v" path="res://Materials/cubemaps/residential_cubemap.tres" id="1_qtaqh"]
+[ext_resource type="Material" uid="uid://wd35bvd65uc7" path="res://Materials/cubemaps/university_cubemap.tres" id="1_a2s1c"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_8ifbo"]
 
@@ -9,29 +9,29 @@
 [node name="Window" type="Node3D" unique_id=1046722248]
 
 [node name="window plane" type="MeshInstance3D" parent="." unique_id=240436063]
-transform = Transform3D(0.75, 0, 0, 0, -3.278354e-08, -0.75, 0, 0.75, -3.278354e-08, 0, 0, 0)
+transform = Transform3D(4, 0, 0, 0, -1.3113416e-07, -1.5, 0, 3, -6.556708e-08, 0, 0, 0)
 mesh = SubResource("PlaneMesh_8ifbo")
-surface_material_override/0 = ExtResource("1_qtaqh")
+surface_material_override/0 = ExtResource("1_a2s1c")
 
 [node name="Frame" type="Node3D" parent="." unique_id=1470157242]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 
 [node name="nx" type="MeshInstance3D" parent="Frame" unique_id=458209576]
-transform = Transform3D(0.05, 0, 0, 0, 1, 0, 0, 0, 0.05, -0.4873012, 0, 0)
+transform = Transform3D(0.075, 0, 0, 0, 2, 0, 0, 0, 0.075, -2.658805, 0, 0)
 mesh = SubResource("BoxMesh_efths")
 skeleton = NodePath("../..")
 
 [node name="px" type="MeshInstance3D" parent="Frame" unique_id=1599015014]
-transform = Transform3D(0.05, 0, 0, 0, 1, 0, 0, 0, 0.05, 0.4820067, 0, 0)
+transform = Transform3D(0.075, 0, 0, 0, 2, 0, 0, 0, 0.075, 2.65522, 0, 0.016112646)
 mesh = SubResource("BoxMesh_efths")
 skeleton = NodePath("../..")
 
 [node name="py" type="MeshInstance3D" parent="Frame" unique_id=1458079734]
-transform = Transform3D(1, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0.475, 0)
+transform = Transform3D(5.25, 0, 0, 0, 0.066, 0, 0, 0, 0.066, 0, 0.9834976, 0.021890244)
 mesh = SubResource("BoxMesh_efths")
 skeleton = NodePath("../..")
 
 [node name="ny" type="MeshInstance3D" parent="Frame" unique_id=1713492832]
-transform = Transform3D(1.015, 0, 0, 0, 0.05, 0, 0, 0, 0.1, 0, -0.475, 0.01929766)
+transform = Transform3D(5.25, 0, 0, 0, 0.066, 0, 0, 0, 0.066, 0, -0.9840735, 0.021890244)
 mesh = SubResource("BoxMesh_efths")
 skeleton = NodePath("../..")

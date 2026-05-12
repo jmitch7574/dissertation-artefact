@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WindowData" format=3 uid="uid://lq2wgpfy2rtd"]
 
-[ext_resource type="PackedScene" uid="uid://cl0wxy8d6locg" path="res://Scenes/square-window.tscn" id="1_o0syy"]
+[ext_resource type="PackedScene" uid="uid://wapfxgd422iw" path="res://Scenes/square-window.tscn" id="1_o0syy"]
 [ext_resource type="Script" uid="uid://dxq51blf55mc0" path="res://Scripts/WindowData.cs" id="1_uech0"]
 
 [resource]

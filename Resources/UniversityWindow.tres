@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WindowData" format=3 uid="uid://bex3suxeac2im"]
+
+[ext_resource type="PackedScene" uid="uid://cl0wxy8d6locg" path="res://Scenes/university-window.tscn" id="1_gxkap"]
+[ext_resource type="Script" uid="uid://dxq51blf55mc0" path="res://Scripts/WindowData.cs" id="2_qm288"]
+
+[resource]
+script = ExtResource("2_qm288")
+Width = 5.0
+Height = 2.0
+WindowScene = ExtResource("1_gxkap")
+metadata/_custom_type_script = "uid://dxq51blf55mc0"

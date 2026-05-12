@@ -6,6 +6,7 @@
 [ext_resource type="Material" uid="uid://cugar8gfaf4jp" path="res://Materials/heightUnavailable.tres" id="4_n4bpb"]
 [ext_resource type="Script" uid="uid://bpwedbtwkhjim" path="res://Scripts/WindowPlacer.cs" id="5_n4bpb"]
 [ext_resource type="Resource" uid="uid://lq2wgpfy2rtd" path="res://Resources/SquareWindow.tres" id="6_jdxhs"]
+[ext_resource type="Resource" uid="uid://bex3suxeac2im" path="res://Resources/UniversityWindow.tres" id="7_vksob"]
 
 [node name="Building" type="Node3D" unique_id=573139546 node_paths=PackedStringArray("bp", "wp")]
 script = ExtResource("1_uj2qm")
@@ -21,3 +22,4 @@ heightUnavailable = ExtResource("4_n4bpb")
 [node name="WindowPlacer" type="Node3D" parent="." unique_id=481653617]
 script = ExtResource("5_n4bpb")
 SquareWindow = ExtResource("6_jdxhs")
+UniversityWindow = ExtResource("7_vksob")

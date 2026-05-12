@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=4 uid="uid://r6gc7n4o4mnx"]
+[gd_scene format=4 uid="uid://r6gc7n4o4mnx"]
 
-[ext_resource type="Material" uid="uid://ns0n1mf2pk3v" path="res://Materials/interior_cubemap.tres" id="1_m10ed"]
+[ext_resource type="Material" uid="uid://ns0n1mf2pk3v" path="res://Materials/cubemaps/residential_cubemap.tres" id="1_m10ed"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_mcsja"]
 _surfaces = [{

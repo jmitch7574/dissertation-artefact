@@ -131,15 +131,7 @@ public partial class BuildingPerimeter : MeshInstance3D
 
     private void AssignMaterial()
     {
-        switch (building.GetBuildingType())
-        {
-            case "residential":
-            case "apartments":
-                MaterialOverlay = GD.Load<Material>("res://Materials/red_brick.tres");
-                break;
-            default:
-                break;
-        }
+        MaterialOverlay = MaterialLibrary.GetForBuilding(building.GetBuildingType());
     }
 
     void VisualiseHeightAvailable()

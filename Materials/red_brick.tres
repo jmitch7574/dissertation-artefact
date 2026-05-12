@@ -4,7 +4,7 @@
 
 [resource]
 albedo_texture = ExtResource("1_11164")
-metallic_specular = 0.2
+metallic_specular = 0.0
 uv1_scale = Vector3(0.35, 0.35, 0.35)
 uv1_triplanar = true
 uv2_triplanar = true

@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://wd35bvd65uc7"]
+
+[ext_resource type="Shader" uid="uid://bnkc6dvod12ah" path="res://Shaders/interior_cubemap.gdshader" id="1_1w8ta"]
+[ext_resource type="Texture2D" uid="uid://bj8k0m855hers" path="res://Textures/university_cubemap.png" id="2_1w8ta"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_1w8ta")
+shader_parameter/cubemap_albedo = ExtResource("2_1w8ta")
+shader_parameter/room_depth = 1.0
+shader_parameter/emission_strength = 0.0

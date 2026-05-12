@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cp6tavr4hw65w"]
+[gd_scene format=3 uid="uid://cp6tavr4hw65w"]
 
-[ext_resource type="Material" uid="uid://ns0n1mf2pk3v" path="res://Materials/interior_cubemap.tres" id="1_fg1wk"]
+[ext_resource type="Material" uid="uid://ns0n1mf2pk3v" path="res://Materials/cubemaps/residential_cubemap.tres" id="1_fg1wk"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_fg1wk"]
 

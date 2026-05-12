@@ -2,7 +2,7 @@ import ijson
 from collections import Counter
 import pandas as pd
 
-file_path = '../OSM Files/london.geojson'
+file_path = '../OSM Files/lincoln/buildings.geojson'
 
 semantic_tags = [
     'height', 'building:levels', 'roof:shape', 'roof:material', 
