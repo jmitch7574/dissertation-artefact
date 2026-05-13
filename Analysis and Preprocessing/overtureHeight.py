@@ -7,12 +7,10 @@ with open("../OSM Files/lincoln/buildings.geojson", encoding="utf-8") as f:
 with open("../OSM Files/lincoln/lincoln_building_overture.geojson", encoding="utf-8") as f:
     overture_data = json.load(f)
 
-# Build a lookup: OSM id -> height, parsing the record_id from sources
-# record_id format: "w123456@2" (way), "r123456@2" (relation), "n123456@2" (node)
-# OSM @id format: "way/123456", "relation/3255811", "node/123456"
 
 prefix_map = {"w": "way", "r": "relation", "n": "node"}
 
+# Build an overture lookup
 overture_heights = {}
 for feature in overture_data["features"]:
     height = feature["properties"].get("height")
@@ -29,7 +27,7 @@ for feature in overture_data["features"]:
                 overture_heights[osm_id] = height
             break
 
-# Apply heights to OSM features
+# Apply heights to OSM features by OSM ID shared across both
 for feature in osm_data["features"]:
     props = feature["properties"]
     if props.get("height") is not None:
@@ -38,7 +36,7 @@ for feature in osm_data["features"]:
     if osm_id and osm_id in overture_heights:
         props["overture:height"] = overture_heights[osm_id]
 
-# Strip nulls
+# Strip null properties which inflate file size
 for feature in osm_data["features"]:
     feature["properties"] = {
         k: v for k, v in feature["properties"].items() if v is not None

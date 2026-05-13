@@ -1,3 +1,7 @@
+// INTERIOR CUBEMAP SHADER USED FOR WINDOWS
+// ORIGINAL AUTHOR: ANDREATERENZ
+// AVAILABLE AT: https://godotshaders.com/shader/interior-mapping-shader/
+
 shader_type spatial;
 //render_mode unshaded;
 

@@ -2,9 +2,8 @@ import ijson
 from collections import Counter
 import pandas as pd
 
-file_path = '../OSM Files/london.geojson'
+file_path = '../OSM Files/lincoln/buildings.geojson'
 
-# Counters are great for large-scale tallies without building a huge list
 building_counts = Counter()
 amenity_counts = Counter()
 indoor_counts = Counter()
@@ -15,14 +14,11 @@ indoor_count_total = 0
 print("Processing file...")
 
 try:
-    # 'encoding="utf-8"' is the fix for your UnicodeDecodeError
     with open(file_path, 'r', encoding='utf-8') as f:
-        # ijson.items streams only the 'properties' block of each feature
-        # This prevents loading the 1.3GB into RAM all at once
         parser = ijson.items(f, 'features.item.properties')
         
         for prop in parser:
-            # Safely grab values and update tallies
+            # Grab values and update tallies
             b = prop.get('building')
             a = prop.get('amenity')
             c = prop.get('indoor')

@@ -23,12 +23,10 @@ public partial class BuildingPerimeter : MeshInstance3D
 
     public void Generate()
     {
-        //VisualiseHeightAvailable();
-        AssignMaterial();
-
         List<Vector3> verts = new();
         List<Vector3> normals = new();
-        List<int> indices = new();
+        List<int> wallIndices = new();
+        List<int> roofIndices = new();
 
         int offset = 0;
 
@@ -64,12 +62,12 @@ public partial class BuildingPerimeter : MeshInstance3D
                 {
                     normals.Add(normal);
                 }
-                indices.Add(offset + 0);
-                indices.Add(offset + 1);
-                indices.Add(offset + 2);
-                indices.Add(offset + 2);
-                indices.Add(offset + 3);
-                indices.Add(offset + 0);
+                wallIndices.Add(offset + 0);
+                wallIndices.Add(offset + 1);
+                wallIndices.Add(offset + 2);
+                wallIndices.Add(offset + 2);
+                wallIndices.Add(offset + 3);
+                wallIndices.Add(offset + 0);
                 offset += 4;
             }
         }
@@ -108,7 +106,6 @@ public partial class BuildingPerimeter : MeshInstance3D
             catch
             {
                 GD.PrintErr("Failed to Triangulate building");
-                continue;
             }
 
             foreach (var tri in polygon.Triangles)
@@ -117,40 +114,30 @@ public partial class BuildingPerimeter : MeshInstance3D
                 {
                     verts.Add(new Vector3((float)p.X, building.Height, (float)p.Y));
                     normals.Add(Vector3.Up);
-                    indices.Add(offset++);
+                    roofIndices.Add(offset++);
                 }
             }
         }
 
-        var arrays = new Godot.Collections.Array();
-
-        arrays.Resize((int)Mesh.ArrayType.Max);
-
-        arrays[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
-        arrays[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-        arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
         var mesh = new ArrayMesh();
 
-        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+        var wallArrays = new Godot.Collections.Array();
+        wallArrays.Resize((int)Mesh.ArrayType.Max);
+        wallArrays[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
+        wallArrays[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+        wallArrays[(int)Mesh.ArrayType.Index] = wallIndices.ToArray();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, wallArrays);
+
+        var roofArrays = new Godot.Collections.Array();
+        roofArrays.Resize((int)Mesh.ArrayType.Max);
+        roofArrays[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
+        roofArrays[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+        roofArrays[(int)Mesh.ArrayType.Index] = roofIndices.ToArray();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, roofArrays);
 
         Mesh = mesh;
-    }
 
-    private void AssignMaterial()
-    {
-        MaterialOverlay = MaterialLibrary.GetForBuilding(building.GetBuildingType());
-    }
-
-    void VisualiseHeightAvailable()
-    {
-        if (building.Height == -1)
-        {
-            building.Height = 12.0f;
-            MaterialOverlay = heightUnavailable;
-            return;
-        }
-
-        MaterialOverlay = heightAvailable;
+        SetSurfaceOverrideMaterial(0, MaterialLibrary.GetForBuilding(building.GetBuildingType())); // wall
+        SetSurfaceOverrideMaterial(1, MaterialLibrary.GetRoofMaterial());
     }
 }

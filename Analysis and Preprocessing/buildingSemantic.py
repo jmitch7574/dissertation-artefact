@@ -17,10 +17,10 @@ withres_tag_counts = Counter()
 withres_total_buildings = 0
 
 nores_tag_counts = Counter()
-nores_total_buildings = 0 # Fixed: was Counter(), should be int
+nores_total_buildings = 0
 
 onlyres_tag_counts = Counter()
-onlyres_total_buildings = 0 # Fixed: was Counter(), should be int
+onlyres_total_buildings = 0
 
 for tag in semantic_tags:
     withres_tag_counts[tag] = 0

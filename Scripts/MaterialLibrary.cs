@@ -24,6 +24,7 @@ public static class MaterialLibrary
         { "residential", "res://Materials/red_brick.tres" },
         { "apartments", "res://Materials/red_brick.tres" },
         { "university", "res://Materials/dark-concrete.tres" },
+        { "retail", "res://Materials/retail_brick.tres" },
     };
 
     private static readonly Dictionary<string, string> RoadMaterials = new()
@@ -62,5 +63,15 @@ public static class MaterialLibrary
     {
         var key = BuildingMaterials.ContainsKey(buildingType) ? buildingType : null; // fallback
         return key != null ? GD.Load<Material>(BuildingMaterials[key]) : null;
+    }
+
+    public static Material GetRoofMaterial()
+    {
+        return GD.Load<Material>("res://Materials/roof-material.tres");
+    }
+
+    public static Material GetRoofLipMaterial()
+    {
+        return GD.Load<Material>("res://Materials/concrete.tres");
     }
 }

@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d4fbnyf02u74i"]
+
+[ext_resource type="Texture2D" uid="uid://diy551flic4q3" path="res://Textures/concrete/Concrete034_1K-JPG_Color.jpg" id="1_wsdke"]
+[ext_resource type="Texture2D" uid="uid://ddvjel3vc5l8j" path="res://Textures/concrete/Concrete034_1K-JPG_Displacement.jpg" id="2_lqhjw"]
+[ext_resource type="Texture2D" uid="uid://b45ngct3fiu8o" path="res://Textures/concrete/Concrete034_1K-JPG_NormalGL.jpg" id="3_ogrip"]
+[ext_resource type="Texture2D" uid="uid://br2doy6j66kse" path="res://Textures/concrete/Concrete034_1K-JPG_Roughness.jpg" id="4_cof5v"]
+
+[resource]
+albedo_color = Color(0.21230483, 0.21230483, 0.21230483, 1)
+albedo_texture = ExtResource("1_wsdke")
+metallic_specular = 0.0
+roughness_texture = ExtResource("4_cof5v")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("3_ogrip")
+heightmap_enabled = true
+heightmap_scale = 1.0
+heightmap_texture = ExtResource("2_lqhjw")
+uv1_scale = Vector3(0.35, 0.35, 0.35)
+uv1_triplanar = true
+uv2_scale = Vector3(0.35, 0.35, 0.35)
+uv2_triplanar = true

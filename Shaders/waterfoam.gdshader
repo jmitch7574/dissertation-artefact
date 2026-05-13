@@ -2,6 +2,7 @@
 // Adapted from https://www.shadertoy.com/view/3tKBDz
 // After which I added in some fractal Brownian motion
 // as well as vertex displacement
+// Shader available from: https://godotshaders.com/shader/wind-waker-water-no-textures-needed/
 
 shader_type spatial;
 

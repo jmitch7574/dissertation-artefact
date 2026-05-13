@@ -19,40 +19,12 @@ public partial class Manager : Node3D
     [ExportToolButton("Kill Children")]
     public Callable KillChildrenButton => Callable.From(KillChildren);
 
-    public override void _EnterTree()
-    {
-        var ctx = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
-        if (ctx != null)
-            ctx.Unloading += OnUnloading;
-    }
-
-    private static void OnUnloading(AssemblyLoadContext ctx)
-    {
-        GD.Print("Unloading");
-
-        var jsonAssembly = typeof(JsonSerializerOptions).Assembly;
-        var updateHandlerType = jsonAssembly.GetType(
-            "System.Text.Json.JsonSerializerOptionsUpdateHandler"
-        );
-        var clearCacheMethod = updateHandlerType?.GetMethod(
-            "ClearCache",
-            BindingFlags.Static | BindingFlags.Public
-        );
-        clearCacheMethod?.Invoke(null, new object?[] { null });
-
-        Assembly[] assembliesToWipe =
-        [
-            typeof(OsmSharp.Node).Assembly,
-            typeof(GeoJSON.Text.GeoJSONObject).Assembly,
-        ];
-
-        foreach (var type in assembliesToWipe.SelectMany(a => a.GetTypes()))
-            ClassStateWiper.Unload(type, null, false);
-    }
-
     public override void _Ready()
     {
-        Generate();
+        if (!Engine.IsEditorHint())
+        {
+            Generate(); // Only automatically generate if in game mode
+        }
     }
 
     public void Generate()
@@ -153,7 +125,7 @@ public partial class Manager : Node3D
                 bool hasAmenity = props.TryGetValue("amenity", out object _amenity);
 
                 if (!hasLanduse && !hasAmenity && !isWater)
-                    continue; // ← skip only if NEITHER landuse NOR water
+                    continue; // skip only if neither landuse NOR water, amenity is sometimes used for landuse too
 
                 string landuse = isWater ? "water" : _landuse?.ToString() ?? _amenity?.ToString();
 
@@ -201,7 +173,7 @@ public partial class Manager : Node3D
                             if (isWater)
                             {
                                 waterPolygons.Add(thisPoly);
-                                continue; // ← don't build a terrain mesh for water, CSG handles it
+                                continue;
                             }
 
                             var node = TerrainBuilder.Build(thisPoly, landuse);

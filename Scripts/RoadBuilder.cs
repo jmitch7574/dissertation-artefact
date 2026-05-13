@@ -48,7 +48,6 @@ public static class RoadBuilder
             var left = points[i] - perp;
             var right = points[i] + perp;
 
-            // BNG Y → Godot -Z, roads sit slightly above terrain
             verts.Add(new Vector3(left.X, 0.06f, left.Y));
             verts.Add(new Vector3(right.X, 0.06f, right.Y));
 
@@ -58,11 +57,10 @@ public static class RoadBuilder
             normals.Add(Vector3.Up);
             normals.Add(Vector3.Up);
 
-            // Build quad between this pair and the previous pair
+            // Build Quad
             if (i > 0)
             {
                 int b = (i - 1) * 2;
-                // quad: b, b+1, b+2, b+3
                 indices.Add(b + 0);
                 indices.Add(b + 2);
                 indices.Add(b + 1);

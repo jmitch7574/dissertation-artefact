@@ -1,17 +1,3 @@
-"""
-extract_building_heights.py
-
-Extracts LiDAR-derived building heights from nDSM rasters and attaches them
-to OSM building footprints as a 'lidar:m_height' property.
-
-Key features:
-  - Erodes building polygons inward before sampling to avoid edge-pixel noise
-  - Correctly handles courtyard buildings (polygons with holes):
-      outer walls shrink inward, courtyard holes expand outward
-  - Falls back to the original polygon for buildings too small to erode
-  - Strips null properties from the output GeoJSON
-"""
-
 import json
 import numpy as np
 import rasterio
@@ -30,11 +16,7 @@ OFFSET_METRES = 2
 
 def shrink_vertexes(geom, offset_metres):
     """
-    Sample the vertexes of a building height such that the vertexes move towards the building's body
-      - Outer boundary:           shrinks inward  (negative buffer)
-      - Inner boundaries / holes: grow outward    (positive buffer on the hole)
-
-    return the original polygon if shrinked edges collapse
+    Shrink vertices within a building by an offset to reduce roof-ground noise at building edges
     """
     if geom is None or geom.is_empty:
         return geom
@@ -68,10 +50,9 @@ def shrink_vertexes(geom, offset_metres):
         valid_parts = [p for p in parts if p is not None and not p.is_empty]
         if valid_parts:
             return unary_union(valid_parts)
-        return geom  # All parts collapsed — return original
+        return geom # return original if building is too small and points collapse
 
     else:
-        # Points, LineStrings, etc. — leave unchanged
         return geom
 
 print("Reading DSM and DTM rasters...")
@@ -107,7 +88,6 @@ sampling_geoms = gpd.GeoSeries(
     crs=buildings.crs
 )
 
-# Report how many fell back to the original polygon
 n_fallback = sum(
     s.equals(o)
     for s, o in zip(sampling_geoms, buildings.geometry)

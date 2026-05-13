@@ -57,12 +57,10 @@ public partial class WindowPlacer : Node3D
 
                     foreach (float windowHeight in CalculateHeightPoints(b))
                     {
-                        // Vector2 paraAngle = new Vector2(1, 0);
+                        if (windowHeight > b.Height)
+                            continue;
+
                         Vector2 perpAngle = new(wallDir.Z, -wallDir.X);
-                        // float angle = paraAngle.AngleTo(perpAngle);
-                        // angle = Mathf.RadToDeg(angle);
-                        // angle += 90;
-                        // angle = -angle;
 
                         float angle = Mathf.RadToDeg(Mathf.Atan2(perpAngle.X, perpAngle.Y));
 

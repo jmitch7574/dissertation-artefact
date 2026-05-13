@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bq6j3yrj0r0s6" path="res://Scenes/water.tscn" id="3_m4rw6"]
 [ext_resource type="Script" uid="uid://c1uhjq2ymigam" path="res://Scripts/Manager.cs" id="4_3kdmg"]
 [ext_resource type="Material" uid="uid://8uprxpao80pn" path="res://Materials/water.tres" id="4_g131g"]
+[ext_resource type="Script" uid="uid://bc1demu3esi54" path="res://Scripts/FPS_Counter.gd" id="6_qxlnq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54p3v"]
 albedo_texture = ExtResource("2_a54av")
@@ -53,3 +54,9 @@ mesh = SubResource("PlaneMesh_qxlnq")
 [node name="Manager" type="Node3D" parent="." unique_id=1303226981]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.740013, -1.583786, 51.257793)
 script = ExtResource("4_3kdmg")
+
+[node name="Label" type="Label" parent="." unique_id=1546759172]
+offset_right = 254.0
+offset_bottom = 27.0
+text = "FPS: XX"
+script = ExtResource("6_qxlnq")
